@@ -1,0 +1,40 @@
+name: YouTube Shorts Bot
+
+on:
+  schedule:
+    # Runs at 13:50 UTC (which corresponds to your 7:20 PM comment)
+    - cron: "50 13 * * *"
+  workflow_dispatch:
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install deps
+        run: npm install
+
+      - name: Run bot
+        env:
+          # --- SHARED CREDENTIALS ---
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          
+          # --- MAIN CHANNEL (Dark Psychology) ---
+          REFRESH_TOKEN_MAIN: ${{ secrets.REFRESH_TOKEN_MAIN }}
+          DRIVE_MAIN_QUEUE_ID: ${{ secrets.DRIVE_MAIN_QUEUE_ID }}
+          DRIVE_MAIN_UPLOADED_ID: ${{ secrets.DRIVE_MAIN_UPLOADED_ID }}
+          
+          # --- SECONDARY CHANNEL (Memes) ---
+          REFRESH_TOKEN_SECONDARY: ${{ secrets.REFRESH_TOKEN_SECONDARY }}
+          DRIVE_SECONDARY_QUEUE_ID: ${{ secrets.DRIVE_SECONDARY_QUEUE_ID }}
+          DRIVE_SECONDARY_UPLOADED_ID: ${{ secrets.DRIVE_SECONDARY_UPLOADED_ID }}
+        run: node index.js
